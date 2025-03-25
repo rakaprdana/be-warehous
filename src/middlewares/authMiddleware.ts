@@ -24,15 +24,15 @@ const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
       req.user = await User.findById(decoded.id).select("-password");
 
       if (!req.user) {
-        return res.status(401).json({ message: "User not found" });
+        res.status(401).json({ message: "User not found" });
       }
 
       next();
     } catch (error) {
-      return res.status(401).json({ message: "Invalid token" });
+      res.status(401).json({ message: "Invalid token" });
     }
   } else {
-    return res.status(401).json({ message: "Not authorized, no token" });
+    res.status(401).json({ message: "Not authorized, no token" });
   }
 };
 
