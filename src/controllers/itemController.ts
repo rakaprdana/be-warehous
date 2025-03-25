@@ -11,7 +11,7 @@ export const getItems = async (req: Request, res: Response) => {
   }
 };
 //New code
-export const getItemById = async (req: Request, res: any) => {
+export const getItemById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -21,7 +21,7 @@ export const getItemById = async (req: Request, res: any) => {
     });
 
     if (!item) {
-      return res.status(404).json({ message: "Item not found" });
+      res.status(404).json({ message: "Item not found" });
     }
 
     res.json(item);

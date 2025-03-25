@@ -1,0 +1,502 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Warehouse Inventory Management API",
+    "description": "API untuk manajemen inventaris gudang",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://warehous-production-api.up.railway.app/api",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints untuk autentikasi pengguna"
+    },
+    {
+      "name": "Items",
+      "description": "Endpoints untuk manajemen item inventaris"
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Mendaftarkan pengguna baru",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pendaftaran berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid user data"
+          },
+          "409": {
+            "description": "User already exist"
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login pengguna",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignInRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email or password"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/items": {
+      "get": {
+        "tags": ["Items"],
+        "summary": "Mendapatkan daftar semua item",
+        "responses": {
+          "200": {
+            "description": "Daftar item berhasil didapatkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Item"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Items"],
+        "summary": "Membuat item baru",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateItemRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item berhasil dibuat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
+
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/items/{id}": {
+      "get": {
+        "tags": ["Items"],
+        "summary": "Mendapatkan item berdasarkan ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item berhasil didapatkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      },
+      "put": {
+        "tags": ["Items"],
+        "summary": "Memperbarui item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateItemRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item berhasil diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
+
+          "404": {
+            "description": "Item not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      },
+      "delete": {
+        "tags": ["Items"],
+        "summary": "Soft delete item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item berhasil diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftDeleteItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SignUpRequest": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "User Example"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 6,
+            "example": "password123"
+          }
+        }
+      },
+      "SignInRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123"
+          }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            }
+          },
+          "token": {
+            "type": "string",
+            "description": "JWT token untuk autentikasi"
+          }
+        }
+      },
+      "CreateItemRequest": {
+        "type": "object",
+        "required": ["code", "name", "quantity", "category"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "ITM-001",
+            "description": "Kode unik item"
+          },
+          "name": {
+            "type": "string",
+            "example": "Bolt 5mm",
+            "description": "Nama item"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 100,
+            "description": "Jumlah item"
+          },
+          "category": {
+            "type": "string",
+            "example": "Hardware",
+            "description": "Kategori item"
+          },
+          "stack": {
+            "type": "string",
+            "example": "A1",
+            "description": "Lokasi penyimpanan di gudang"
+          },
+          "in": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z",
+            "description": "Tanggal masuk item"
+          }
+        }
+      },
+      "UpdateItemRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "ITM-001",
+            "description": "Kode unik item"
+          },
+          "name": {
+            "type": "string",
+            "example": "Bolt 5mm",
+            "description": "Nama item"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 100,
+            "description": "Jumlah item"
+          },
+          "category": {
+            "type": "string",
+            "example": "Hardware",
+            "description": "Kategori item"
+          },
+          "stack": {
+            "type": "string",
+            "example": "A1",
+            "description": "Lokasi penyimpanan di gudang"
+          },
+          "in": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z",
+            "description": "Tanggal masuk item"
+          },
+          "out": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z",
+            "description": "Tanggal keluar item"
+          }
+        }
+      },
+      "SoftDeleteItem": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "ITM-001",
+            "description": "Kode unik item"
+          },
+          "name": {
+            "type": "string",
+            "example": "Bolt 5mm",
+            "description": "Nama item"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 100,
+            "description": "Jumlah item"
+          },
+          "category": {
+            "type": "string",
+            "example": "Hardware",
+            "description": "Kategori item"
+          },
+          "stack": {
+            "type": "string",
+            "example": "A1",
+            "description": "Lokasi penyimpanan di gudang"
+          },
+          "in": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z",
+            "description": "Tanggal masuk item"
+          },
+          "out": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z",
+            "description": "Tanggal keluar item"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Tanggal soft delete, null jika belum dihapus"
+          }
+        }
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID unik item"
+          },
+          "code": {
+            "type": "string",
+            "description": "Kode unik item"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nama item"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Jumlah item"
+          },
+          "category": {
+            "type": "string",
+            "description": "Kategori item"
+          },
+          "stack": {
+            "type": "string",
+            "description": "Lokasi penyimpanan di gudang"
+          },
+          "in": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Tanggal masuk item"
+          },
+          "out": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Tanggal keluar item"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
