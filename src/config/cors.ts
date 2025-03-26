@@ -3,7 +3,7 @@ import { CorsOptions } from "cors";
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://warehouse-inventory-chi.vercel.app/",
+  "https://warehouse-inventory-chi.vercel.app",
 ];
 
 const corsOptions: CorsOptions = {
