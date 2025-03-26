@@ -5,19 +5,20 @@ import bodyParser from "body-parser";
 import itemRoutes from "./routes/itemRoutes";
 import authRoutes from "./routes/authRoutes";
 import dotenv from "dotenv";
-import { setupSwagger } from "./utils/swagger";
-
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./routes/docs/docs-route";
+import corsOptions from "./config/cors";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
 app.use(bodyParser.json());
-
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
 // swagger
-setupSwagger(app);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 mongoose
   .connect(process.env.MONGODB_URL || "3000")
