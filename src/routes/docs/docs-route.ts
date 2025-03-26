@@ -6,7 +6,7 @@ import { itemSchemas } from "./schemas/item-schema";
 const swaggerDefinition: OAS3Definition = {
   openapi: "3.0.3",
   info: {
-    title: "SeviGo API Documentation",
+    title: "Warehouse Management API Documentation",
     description: "Description here!",
     version: "1.0.0",
   },
